@@ -3,33 +3,51 @@ from django.shortcuts import render
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-from .models import *
+from tkAPI.models import *
 
 import requests
 
-#从QQ群发送的内容中获取信息
-@csrf_exempt
-def insert_tb_info(request):
-    itemid = request.POST.get('itemid')
-    title = request.POST.get('title')
-    price = request.POST.get('price')
-    coupon = request.POST.get('coupon')
-    commodity = request.POST.get('commodity')
-    content = request.POST.get('content')
+from tkAPI.models import Item
+from tkAPI.serializers import ItemSerializer
+from rest_framework import generics, permissions
+
+'''
+API
+'''
+# 获取列表
+class ItemList(generics.ListCreateAPIView):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+
+# 获取详情
+class ItemDetail(generics.ListCreateAPIView):
+    model = Item
+    queryset = Item.objects.order_by('id')[0:9]
+    serializer_class = ItemSerializer
+    permission_classes = [  
+        permissions.AllowAny  
+    ]  
+
+class ItemDetailByTime(generics.ListCreateAPIView):
+    model = Item
+    serializer_class = ItemSerializer
+
+    def get_queryset(self):
+        queryset = Item.objects.all()
+        time = self.request.query_params.get('time')
+        count = len(self.request.query_params)
+        print(count)
+        print(self.request.query_params)
+        print(time)
+        if time:
+            print('比较时间')
+            querystr = 'item_addtime > ' + time
+            queryset = Item.objects.extra(select={'is_recent' : querystr})
+        return queryset
     
-    if coupon is '' or commodity is '':
-        print('coupon is not true')
-        return HttpResponse('error!!', content_type='application/json')
-    else:
-        de = models.items.objects.get(item_id = itemid)
-        if de is None:
-            item = items(item_id = itemid, item_title = title, item_coupon = coupon, item_url = commodity, item_content = content)
-            item.save()
-            return HttpResponse('success', content_type='application/json')
-        else:
-            return HttpResponse('error, exist itemid', content_type='application/json')
-        return HttpResponse('success', content_type='application/json')
-    
+'''
+转发服务
+'''
 url = 'http://127.0.0.1:8081/ajax/tbadd/'
 
 # post提交数据
@@ -37,7 +55,7 @@ def postInfo(name, content, sender):
     data = {'name': name, 'content': content, 'sender': sender}
     r = requests.post(url, data = data)
     
-# 转发QQ信息,将qqbot发送的信息原封不动的转发给tblogin server 端口8081
+# 转发QQ信息,将qqbot发送的数据转发给tblogin server 8081端口
 def trans_qqinfo(request):
     name = request.POST.get('name')
     content = request.POST.get('content')
@@ -45,37 +63,3 @@ def trans_qqinfo(request):
 
     postInfo(name, content, sender)
     return HttpResponse('success', content_type='application/json')
-
-
-# tblogin将qq信息处理完毕后,发送给此server 用于商品信息存储
-def get_tbinfo(request):
-    itemid = request.POST.get('itemid')
-    title = request.POST.get('title')
-    price = request.POST.get('price')
-    coupon = request.POST.get('coupon')
-    commodity = request.POST.get('commodity')
-    content = request.POST.get('content')
-
-    print(itemid)
-    if coupon is '' or commodity is '':
-        print('coupon is not true')
-        return HttpResponse('error!!', content_type='application/json')
-    else:
-        de = None
-        try:
-            de = items.objects.get(item_id = itemid)
-        except:
-            pass
-        if de is None:
-            item = items(item_id = itemid, item_title = title, item_coupon = coupon, item_url = commodity, item_content = content, item_image = '', item_if_active = False)
-            item.save()
-        else:
-            return HttpResponse('error, exist itemid', content_type='application/json')
-        return HttpResponse('success', content_type='application/json')
-    
-    return
-
-# 接受微信用户发送的命令,并执行命令,将结果发回wx server
-def wx_com(request):
-    
-    return

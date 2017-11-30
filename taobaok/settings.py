@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tkAPI'
+    'tkAPI',
+    'rest_framework',
+#    'tkAPI.apps.tkAPIConfig'
+#    'django.contrib.sites',
+    'users',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -56,7 +60,7 @@ ROOT_URLCONF = 'taobaok.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -122,3 +126,48 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TBK_PID = 'mm_40512286_19754960_68174640'
+
+REST_FRAMEWORK = {
+    # 使用Django的标准`django.contrib.auth`权限管理类,
+    # 或者为尚未认证的用户，赋予只读权限.
+    'DEFAULT_PERMISSION_CLASSES': [
+#        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+         'rest_framework.permissions.AllowAny',
+    ]
+}
+AUTH_USER_MODEL = 'users.User'
+
+# django-user2
+# settings
+USERS_REGISTRATION_OPEN = True
+ 
+USERS_VERIFY_EMAIL = True
+ 
+USERS_AUTO_LOGIN_ON_ACTIVATION = True
+ 
+USERS_EMAIL_CONFIRMATION_TIMEOUT_DAYS = 3
+ 
+# Specifies minimum length for passwords:
+USERS_PASSWORD_MIN_LENGTH = 5
+ 
+# Specifies maximum length for passwords:
+USERS_PASSWORD_MAX_LENGTH = None
+ 
+# the complexity validator, checks the password strength
+USERS_CHECK_PASSWORD_COMPLEXITY = True
+ 
+USERS_SPAM_PROTECTION = False  # important!
+ 
+ 
+#  ---------------------------------------------------------
+#  Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+ 
+EMAIL_USE_TLS = False
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = ''
+#  ---------------------------------------------------------
+

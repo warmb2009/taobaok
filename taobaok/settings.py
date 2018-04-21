@@ -23,9 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '3!%i_+y$gv*+ur2m)94l!jexnjd_1g#4%po7pipmrjsnq#ib@c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True
+DEBUG = False
+ALLOWED_HOSTS = ['127.0.0.1']
 
-ALLOWED_HOSTS = ['192.168.0.100', '127.0.0.1']
 
 
 # Application definition
@@ -111,13 +112,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -126,6 +127,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TBK_PID = 'mm_40512286_19754960_68174640'
+AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     # 使用Django的标准`django.contrib.auth`权限管理类,
@@ -135,7 +137,7 @@ REST_FRAMEWORK = {
          'rest_framework.permissions.AllowAny',
     ]
 }
-AUTH_USER_MODEL = 'users.User'
+
 
 # django-user2
 # settings
@@ -170,4 +172,5 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = ''
 #  ---------------------------------------------------------
+
 
